@@ -1,6 +1,6 @@
 # Simple calculator application.
 # Avoid global and instance variables, classes.
-# Future enhancement, handle decimals and negative numbers.
+# Future enhancement, handle decimals and error checking incorrect input
 
 require 'pry' 
 
@@ -9,7 +9,8 @@ def equation_to_array(input_string)
   eq_array = []
   count = 0
 
-  # Iterate through each character in the array, if an operator symbol is encountered, create a new object in the array.  
+  # Iterate through each character from the input string, if an operator symbol is encountered, create a new object in the array. 
+  # Handle cases with negative numbers.
   # Increase 'count' before setting object in 'eq_array' when object isn't empty, to avoid two operators in one object in the array.
   chars.each_with_index do |c,i|
     if /[-+*\/]/.match(c) != nil
@@ -35,20 +36,21 @@ def equation_to_array(input_string)
   end
 
   eq_array
-
 end
 
 def print_result(result)
-  puts "=\n#{result}"
+  puts "="
+  puts "#{result}"
 end
 
 
 loop do
   
-  puts "\n\n*******\nPlease enter an operation to add, subtract, multiply or divide two integers.\
-    \nUse the + - * / symbols to indicate the operation to perform.\
-    \nExamples: 1+1, 4-2, 3*4, 6/4\
-    \n*******\n"
+  puts "\n*******"
+  puts "Please enter an operation to add, subtract, multiply or divide two integers."
+  puts "Use the + - * / symbols to indicate the operation to perform."
+  puts "Examples: 1+1, 4-2, 3*4, 6/4"
+  puts "*******\n"
 
   input = gets.chomp
   input.delete!(" ")
@@ -70,8 +72,8 @@ loop do
       puts "Cannot divide by zero!"
     else
       result_array = equation_array[0].to_f.divmod(equation_array[2].to_f)
-      fraction = (result_array[1].to_f / equation_array[2].to_f).round(2).rationalize
-      fraction = "" if result_array[1] == 0
+      result_array[1] == 0 ? fraction = "" : fraction = (result_array[1].to_f / equation_array[2].to_f).round(2).rationalize
+
       result = "#{result_array[0]} #{fraction}"
       print_result(result)
     end
@@ -81,6 +83,7 @@ loop do
 
   puts "\nWould you like to continue?  Please enter 'Y' to continue."
   continue = gets.chomp
+
   if continue != 'Y'
     break
   end
