@@ -1,52 +1,76 @@
 # Simple calculator application.
 # Avoid global and instance variables, classes.
-# Future enhancement, handle decimals.
+# Future enhancement, handle decimals and negative numbers.
 
 require 'pry' 
 
-def split_equation(input_string)
-  input_string.split(/\W/)
-end
+def equation_to_array(input_string)
+  chars = input_string.split(//)
+  eq_array = []
+  count = 0
 
-def perform_operation(operation)
+  # Iterate through each character in the array, if an operator symbol is encountered, create a new object in the array.  
+  # Increase 'count' before setting object in 'eq_array' when object isn't empty, to avoid two operators in one object in the array.
+  chars.each_with_index do |c,i|
+    if /[-+*\/]/.match(c) != nil
+      if eq_array[count] == nil
+        eq_array[count] = c
+        count += 1 if i != 0
+      else
+        count +=1
+        eq_array[count] = c
+      end
+    else
+      if eq_array[count] == nil
+        eq_array[count] = c
+      elsif chars[i-1] == "-" && /[-+*\/]/.match(chars[i-1]) != nil
+        eq_array[count] += c
+      elsif /[-+*\/]/.match(chars[i-1]) != nil
+        count += 1
+        eq_array[count] = c
+      else
+        eq_array[count] += c
+      end
+    end
+  end
+
+  eq_array
+
 end
 
 def print_result(result)
   puts "=\n#{result}"
 end
 
+
 loop do
   
-  puts "\n\n*******\nPlease enter an operation to add, subtract, multiply or divide two numbers.\
+  puts "\n\n*******\nPlease enter an operation to add, subtract, multiply or divide two integers.\
     \nUse the + - * / symbols to indicate the operation to perform.\
     \nExamples: 1+1, 4-2, 3*4, 6/4\
     \n*******\n"
 
-
   input = gets.chomp
-  equation = input.delete(" ")
+  input.delete!(" ")
+  equation_array = equation_to_array(input)
+  operation =  equation_array[1]
 
-  case equation
-  when /\d[+]\d/
-    numbers = split_equation(equation)
-    result = numbers[0].to_i + numbers[1].to_i
+  case operation
+  when "+"
+    result = equation_array[0].to_i + equation_array[2].to_i
     print_result(result)
-  when /\d[-]\d/
-    numbers = split_equation(equation)
-    result = numbers[0].to_i - numbers[1].to_i
+  when "-"
+    result = equation_array[0].to_i - equation_array[2].to_i
     print_result(result)
-  when /\d[*]\d/
-    numbers = split_equation(equation)
-    result = numbers[0].to_i * numbers[1].to_i
+  when "*"
+    result = equation_array[0].to_i * equation_array[2].to_i
     print_result(result)
-  when /\d[\/]\d/
-    numbers = split_equation(equation)
-    if numbers[1] == "0"
+  when "/"
+    if equation_array[2] == "0"
       puts "Cannot divide by zero!"
     else
-      binding.pry
-      result_array = numbers[0].to_f.divmod(numbers[1].to_i)
-      fraction = (result_array[1].to_f / numbers[1].to_f).round(2).rationalize
+      result_array = equation_array[0].to_f.divmod(equation_array[2].to_f)
+      fraction = (result_array[1].to_f / equation_array[2].to_f).round(2).rationalize
       fraction = "" if result_array[1] == 0
       result = "#{result_array[0]} #{fraction}"
       print_result(result)
