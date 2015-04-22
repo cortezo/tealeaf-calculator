@@ -72,7 +72,12 @@ loop do
       puts "Cannot divide by zero!"
     else
       result_array = equation_array[0].to_f.divmod(equation_array[2].to_f)
-      result_array[1] == 0 ? fraction = "" : fraction = (result_array[1].to_f / equation_array[2].to_f).round(2).rationalize
+      
+      if result_array[1] == 0 
+        fraction = ""
+      else
+        fraction = (result_array[1].to_f / equation_array[2].to_f).round(2).rationalize
+      end
 
       result = "#{result_array[0]} #{fraction}"
       print_result(result)
