@@ -24,7 +24,7 @@ def equation_to_array(input_string)
     else
       if eq_array[count] == nil
         eq_array[count] = c
-      elsif chars[i-1] == "-" && /[-+*\/]/.match(chars[i-1]) != nil
+      elsif chars[i-1] == "-" && /[-+*\/]/.match(chars[i-2]) != nil
         eq_array[count] += c
       elsif /[-+*\/]/.match(chars[i-1]) != nil
         count += 1
@@ -56,7 +56,7 @@ loop do
   input.delete!(" ")
   equation_array = equation_to_array(input)
   operation =  equation_array[1]
-
+binding.pry
   case operation
   when "+"
     result = equation_array[0].to_i + equation_array[2].to_i
@@ -72,7 +72,7 @@ loop do
       puts "Cannot divide by zero!"
     else
       result_array = equation_array[0].to_f.divmod(equation_array[2].to_f)
-      
+
       if result_array[1] == 0 
         fraction = ""
       else
